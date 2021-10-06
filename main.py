@@ -8,7 +8,9 @@ import googleapiclient.errors
 
 client = discord.Client()
 
-api_key = '***'
+token = open("token.txt","r") # token in .gitignore token.txt file
+api_key = token.read()
+token.close()
 
 @client.event
 async def on_ready():
