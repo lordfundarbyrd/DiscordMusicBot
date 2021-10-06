@@ -8,7 +8,7 @@ import googleapiclient.errors
 
 client = discord.Client()
 
-api_key = 'AIzaSyBOFMiXvi-wcDG-FoKrau5y1-f_4gVMzk4'
+api_key = '***'
 
 @client.event
 async def on_ready():
