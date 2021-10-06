@@ -40,5 +40,5 @@ def music_channel():
     music_channel = client.get_channel(music_id)
     return music_channel
 
-client.run('ODk1MTE4NDE5NTg4OTQzODky.YVz5_Q.aYmYBrZfO8Z8KAIKvgXrGl3MCvg')
+client.run(token)
 
