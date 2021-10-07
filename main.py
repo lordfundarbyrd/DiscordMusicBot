@@ -7,6 +7,7 @@ import googleapiclient.discovery
 import googleapiclient.errors
 
 client = discord.Client()
+scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
 
 token = open("token.txt","r") # tokens in .gitignore token.txt file
 d_api_key = token.readline()
@@ -55,10 +56,30 @@ async def on_message(message):
                 await vc.disconnect()
 
     if msg.startswith("!yt"):
-        print(msg[4:])
+        #print(msg[4:])
+        os.environ["OAUTHLIB_INSECURE_TRANSPORT"] = "1"
+
+        api_service_name = "youtube"
+        api_version = "v3"
+        client_secrets_file = "client_secrets.json"
+
+        flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
+        client_secrets_file, scopes)
+        credentials = flow.run_console()
+        youtube = googleapiclient.discovery.build(
+        api_service_name, api_version, credentials=credentials)
+
+        request = youtube.videos().list(
+            part="snippet,contentDetails,statistics",
+            id="Ks-_Mh1QhMc"
+        )
+
+        response = request.execute()
+
+        print(response)
 
     #if msg.startswith("$inspire"):
         #quote = get_quote()
         #await message.channel.send(quote)
 
-client.run(api_key)
+client.run(d_api_key)
