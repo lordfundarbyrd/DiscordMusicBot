@@ -8,8 +8,7 @@ import googleapiclient.errors
 
 client = discord.Client()
 scopes = ["https://www.googleapis.com/auth/youtube.readonly"]
-
-token = open("token.txt","r") # tokens in .gitignore token.txt file
+token = open("/Users/delracman/Documents/Discord/token.txt","r") # tokens in .gitignore token.txt file
 d_api_key = token.readline()
 yt_api_key = token.readline()
 token.close()
@@ -61,7 +60,7 @@ async def on_message(message):
 
         api_service_name = "youtube"
         api_version = "v3"
-        client_secrets_file = "client_secrets.json"
+        client_secrets_file = "/Users/delracman/Documents/Discord/client_secrets.json"
 
         flow = google_auth_oauthlib.flow.InstalledAppFlow.from_client_secrets_file(
         client_secrets_file, scopes)
