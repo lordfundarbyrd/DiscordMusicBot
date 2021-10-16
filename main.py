@@ -12,7 +12,7 @@ token.close()
 
 intents = discord.Intents().all()
 client = discord.Client(intents=intents)
-bot = commands.Bot(command_prefix='!',intents=intents)
+bot = commands.Bot(command_prefix='/',intents=intents)
 
 youtube_dl.utils.bug_reports_message = lambda: ''
 
@@ -34,6 +34,8 @@ ffmpeg_options = {
 }
 
 ytdl = youtube_dl.YoutubeDL(ytdl_format_options)
+
+default = None
 
 @bot.event
 async def on_ready():
@@ -60,16 +62,25 @@ class YTDLSource(discord.PCMVolumeTransformer):
         filename = data['title'] if stream else ytdl.prepare_filename(data)
         return filename
 
-@bot.command(name='join', help='Tells the bot to join the voice channel')
+@bot.command(name='default', help='Sets default channel if a user is not in a voice channel.')
+async def default(ctx, id):
+    #TODO: determine how to set default from channel ID, then add branch to join to account for this
+    await ctx
+
+@bot.command(name='join', help='Makes the bot join the voice channel of the user.')
 async def join(ctx):
     if not ctx.message.author.voice:
         await ctx.send("{} is not connected to a voice channel".format(ctx.message.author.name))
         return
+    elif ctx.message.guild.voice_client.is_connected():
+        leave(ctx)
+        channel = ctx.message.author.voice.channel
+        await channel.connect()
     else:
         channel = ctx.message.author.voice.channel
         await channel.connect()
             
-@bot.command(name='leave', help='To make the bot leave the voice channel')
+@bot.command(name='leave', help='Makes the bot leave the voice channel it is in.')
 async def leave(ctx):
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_connected():
@@ -90,7 +101,7 @@ async def play(ctx,url):
     except:
         await ctx.send("The bot is not connected to a voice channel.")
 
-@bot.command(name='pause', help='This command pauses the song')
+@bot.command(name='pause', help='Pauses the current song.')
 async def pause(ctx):
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_playing():
@@ -98,21 +109,25 @@ async def pause(ctx):
     else:
         await ctx.send("The bot is not playing anything at the moment.")
     
-@bot.command(name='resume', help='Resumes the song')
+@bot.command(name='resume', help='Resumes the current song')
 async def resume(ctx):
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_paused():
         await voice_client.resume()
     else:
-        await ctx.send("The bot was not playing anything before this. Use play_song command")
+        await ctx.send("The bot was not playing anything before this. Use play command")
 
-@bot.command(name='stop', help='Stops the song')
+@bot.command(name='stop', help='Stops the current song')
 async def stop(ctx):
     voice_client = ctx.message.guild.voice_client
     if voice_client.is_playing():
         await voice_client.stop()
     else:
         await ctx.send("The bot is not playing anything at the moment.")
+
+@bot.command(name='user', help='Sends the user\'s name')
+async def user(ctx):
+    await ctx.message.send(ctx.message.author)
 
 if __name__ == "__main__" :
     bot.run(DISCORD_TOKEN)
